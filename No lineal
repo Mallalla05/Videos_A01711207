@@ -1,0 +1,73 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+//Esta es la constante para evitar numeros grandes
+const int MOD = 1e9 + 7;
+
+vector<vector<pair<int, int>>> graph; // Lista de adyacencia 
+vector<bool> visited;
+
+// DFS para encontrar componentes solo aristas rojas
+int dfs(int node) {
+    visited[node] = true;
+    int size = 1; 
+    for (auto edge : graph[node]) {
+        int neighbor = edge.first;
+        int weight = edge.second;
+        if (!visited[neighbor] && weight == 0) { 
+            size += dfs(neighbor); 
+        }
+    }
+    return size;
+}
+
+// Calcula (base^exponent) utilizando exponentes binarios
+long long mod_exp(long long base, long long exponent, long long mod) {
+    long long result = 1;
+    while (exponent > 0) {
+        if (exponent % 2 == 1) {
+            result = (result * base) % mod;
+        }
+        base = (base * base) % mod;
+        exponent /= 2;
+    }
+    return result;
+}
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+
+    // Inicia en grafo y los vectores visitados
+    graph.resize(n + 1); 
+    visited.resize(n + 1, false);
+
+    //se leen las aristas del grafo
+    for (int i = 0; i < n - 1; ++i) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w}); 
+        graph[v].push_back({u, w}); 
+    }
+
+    // Se calculan las secuencias que no tienen restricciones
+    long long total_ways = mod_exp(n, k, MOD);
+    long long edgy_ways = 0;
+
+    // Se usa DFS para encontrar los componentes de las aristas rojas
+    for (int i = 1; i <= n; ++i) {
+        if (!visited[i]) {
+            int size = dfs(i); 
+            edgy_ways = (edgy_ways + mod_exp(size, k, MOD)) % MOD; 
+        }
+    }
+
+    // Se calculan las secuencias buenas
+    long long result = (total_ways - edgy_ways + MOD) % MOD;
+
+    // Se imprime el resultado
+    cout << result << endl;
+
+    return 0;
+}

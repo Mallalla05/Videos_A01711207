@@ -1,0 +1,42 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// Nos permite ordenas por bubble sort un vector
+void bubbleSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = 0; j < n - i - 1; ++j) {
+            if (arr[j] > arr[j + 1]) { 
+                swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+}
+int main() {
+    int n;
+    cin >> n; 
+//Se leen los valores y se guardan en el vector
+    vector<int> coins(n);
+    int totalSum = 0;
+    for (int i = 0; i < n; ++i) {
+        cin >> coins[i];
+        totalSum += coins[i];
+    }
+    //Ordena las monedas de menor a mayor usando Bubble Sort
+    bubbleSort(coins);
+
+    // Se recorre del final para tener las monedas mas grande
+    int currentSum = 0;
+    int count = 0;
+    for (int i = n - 1; i >= 0; --i) {
+        currentSum += coins[i];
+        ++count;
+        if (currentSum > totalSum - currentSum) {
+            break;
+        }
+    }
+//Se imprimen el numero de monedas
+    cout << count << endl;
+    return 0;
+}
